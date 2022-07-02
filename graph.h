@@ -15,19 +15,24 @@
 // Identification for nodes in Graphs
 //
 using NodeID = int;
+constexpr NodeID NO_NODE = NodeID{ -1 };
 
 //
 // Basic nodes for Graphs
 //
-struct NodeBase {
-    std::unordered_set<NodeID> inputs{};
-    std::unordered_set<NodeID> outputs{};
+template<typename SetT = std::unordered_set<NodeID>>
+struct BaseNode {
+    SetT inputs{};
+    SetT outputs{};
 };
 
 //
 // The Graph
 //
-template <typename NodeT>
+template <
+    typename NodeT,
+    typename AssociativeArrayT = std::unordered_map<NodeID, NodeT>,
+    typename SetT = std::unordered_set<NodeID>>
 class Graph {
 public:
     // Create a new node in the class. Returns the newly created nodes identification
@@ -98,7 +103,7 @@ public:
         }
 
         // Write dot footer
-        os << "}" << std::endl;
+        os << "}";
     }
 
     // Write a DOT graph of this Graph to a file
@@ -107,10 +112,10 @@ public:
         generate_dot_graph(f);
     }
 protected:
-    std::unordered_map<NodeID, NodeT> hash_map{};
+    AssociativeArrayT hash_map{};
 
 private:
-    NodeID next_id{ NodeID{} };
+    NodeID next_id{ NO_NODE+1 };
 };
 
 #endif
