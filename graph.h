@@ -20,19 +20,16 @@ constexpr NodeID NO_NODE = NodeID{ -1 };
 //
 // Basic nodes for Graphs
 //
-template<typename SetT = std::unordered_set<NodeID>>
+template<template<class...> class SetT = std::unordered_set>
 struct BaseNode {
-    SetT inputs{};
-    SetT outputs{};
+    SetT<NodeID> inputs{};
+    SetT<NodeID> outputs{};
 };
 
 //
 // The Graph
 //
-template <
-    typename NodeT,
-    typename AssociativeArrayT = std::unordered_map<NodeID, NodeT>,
-    typename SetT = std::unordered_set<NodeID>>
+template<typename NodeT, template<class...> class AssociativeArrayT = std::unordered_map>
 class Graph {
 public:
     // Create a new node in the class. Returns the newly created nodes identification
@@ -43,7 +40,7 @@ public:
     }
 
     // Create a new directional arc between two nodes in the Graph
-    // Can throw std::out_of_range if one of the nodes does not exist
+    // Can throw std::out_of_range if one of the node:ids refer to a non-existing node.
     void create_arc(NodeID from, NodeID to) {
         // Make sure both nodes exists before creating arc
         hash_map.at(from); hash_map.at(to);
@@ -55,7 +52,7 @@ public:
     }
 
     // Create two new directional arcs, back and forth, between two nodes in the Graph
-    // Can throw std::out_of_range if one of the nodes does not exist
+    // Can throw std::out_of_range if one of the node:ids refer to a non-existing node.
     void create_bidirectional_arc(NodeID node1, NodeID node2) {
         create_arc(node1, node2);
         create_arc(node2, node1);
@@ -112,7 +109,7 @@ public:
         generate_dot_graph(f);
     }
 protected:
-    AssociativeArrayT hash_map{};
+    AssociativeArrayT<NodeID, NodeT> hash_map{};
 
 private:
     NodeID next_id{ NO_NODE+1 };

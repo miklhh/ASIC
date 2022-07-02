@@ -10,8 +10,8 @@
 // Use graph with regular map (instead of unordered_map) and set (instead of unordered_set) in the unit tests, so that
 // nodes are in total order, which makes reproducing tests a lot easier.
 //
-using UnitTestNode = BaseNode<std::set<NodeID>>;
-using UnitTestGraph = Graph<UnitTestNode, std::map<NodeID, UnitTestNode>>;
+using UnitTestNode = BaseNode<std::set>;
+using UnitTestGraph = Graph<UnitTestNode, std::map>;
 
 
 TEST_CASE("Insert nodes and arcs to a new graph")
