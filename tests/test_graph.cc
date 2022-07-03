@@ -3,6 +3,8 @@
 
 #include <sstream>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <map>
 #include <set>
 
@@ -13,17 +15,18 @@
 using UnitTestNode = BaseNode<std::set>;
 using UnitTestGraph = Graph<UnitTestNode, std::map>;
 
+//
+// Read all content from a file (until EOF) and return a string with it's content
+//
+std::string read_file_to_string(const std::string &filename) {
+    std::ifstream fs(filename);
+    std::stringstream res{};
+    res << fs.rdbuf();
+    return res.str();
+}
 
 TEST_CASE("Insert nodes and arcs to a new graph")
 {
-    const std::string DOT_REFERENCE{
-        "strict digraph {\n"
-        "    0 -> { 1 2 }\n"
-        "    1 -> { 0 2 }\n"
-        "    2 -> { }\n"
-        "}"
-    };
-
     UnitTestGraph graph{};
     NodeID n0 = graph.create_node();
     NodeID n1 = graph.create_node();
@@ -34,20 +37,14 @@ TEST_CASE("Insert nodes and arcs to a new graph")
 
     std::stringstream s;
     graph.generate_dot_graph(s);
-    graph.generate_dot_graph("dot-graphs/graph1.dot");
-    REQUIRE(DOT_REFERENCE == s.str());
+    REQUIRE( read_file_to_string("dot-graphs/ref-graph1.dot") == s.str() );
+
+    // Store result to a file
+    graph.generate_dot_graph("dot-graphs/test-graph1.dot");
 }
 
 TEST_CASE("Test removing nodes from the graph")
 {
-    const std::string DOT_REFERENCE {
-        "strict digraph {\n"
-        "    0 -> { 1 }\n"
-        "    1 -> { 0 }\n"
-        "    3 -> { }\n"
-        "    4 -> { 3 }\n"
-        "}"
-    };
     UnitTestGraph graph{};
     NodeID n0 = graph.create_node();
     NodeID n1 = graph.create_node();
@@ -60,10 +57,13 @@ TEST_CASE("Test removing nodes from the graph")
     graph.create_bidirectional_arc(n3, n4);
     graph.delete_node(n2);
     graph.delete_arc(n3, n4);
+
     std::stringstream s;
     graph.generate_dot_graph(s);
-    graph.generate_dot_graph("dot-graphs/graph2.dot");
-    REQUIRE(DOT_REFERENCE == s.str());
+    REQUIRE( read_file_to_string("dot-graphs/ref-graph2.dot") == s.str() );
+
+    // Store result to a file
+    graph.generate_dot_graph("dot-graphs/test-graph2.dot");
 }
 
 TEST_CASE("Create a Graph with 50 nodes in a circle")
@@ -78,5 +78,10 @@ TEST_CASE("Create a Graph with 50 nodes in a circle")
     }
     graph.create_bidirectional_arc(prev_node, first_node);
 
-    graph.generate_dot_graph("dot-graphs/graph3.dot");
+    std::stringstream s;
+    graph.generate_dot_graph(s);
+    REQUIRE( read_file_to_string("dot-graphs/ref-graph3.dot") == s.str() );
+
+    // Store result to a file
+    graph.generate_dot_graph("dot-graphs/test-graph3.dot");
 }

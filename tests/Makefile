@@ -7,7 +7,7 @@ run-all: test_graph.out test_sfg.out
 	./test_graph.out
 	./test_sfg.out
 
-test_graph.out: test_graph.cc catch.o ../graph.h
+test_graph.out: test_graph.cc catch.o ../graph.h ../trait.h
 	${CC} ${CFLAGS} test_graph.cc catch.o -o $@
 
 test_sfg.out: test_sfg.cc catch.o ../sfg.h ../op.h ../graph.h

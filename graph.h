@@ -4,12 +4,18 @@
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
+#include "trait.h"
+
 #include <unordered_map>
 #include <unordered_set>
+#include <map>
+#include <set>
 #include <vector>
 #include <string>
 #include <ostream>
 #include <fstream>
+#include <type_traits>
+
 
 //
 // Identification for nodes in Graphs
@@ -22,6 +28,10 @@ constexpr NodeID NO_NODE = NodeID{ -1 };
 //
 template<template<class...> class SetT = std::unordered_set>
 struct BaseNode {
+    static_assert(
+        is_set_type<SetT<NodeID>>::value,
+        "Set container expected"
+    );
     SetT<NodeID> inputs{};
     SetT<NodeID> outputs{};
 };
@@ -109,6 +119,10 @@ public:
         generate_dot_graph(f);
     }
 protected:
+    static_assert(
+        is_associative_array_type<AssociativeArrayT<NodeID, NodeT>>::value,
+        "Associate container expected"
+    );
     AssociativeArrayT<NodeID, NodeT> hash_map{};
 
 private:
