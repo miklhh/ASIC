@@ -11,7 +11,7 @@
 #include <unordered_set>
 
 //
-// Traits for Associative Arrays (is exactly map or unordered_map)
+// Traits for Associative Arrays (is exactly std::map or std::unordered_map)
 //
 template <class... T>
 struct is_associative_array_type : std::false_type {};
@@ -23,7 +23,7 @@ template <class... T>
 struct is_associative_array_type<std::unordered_map<T...>> : std::true_type {};
 
 //
-// Trait for Sets (is exactly set or unordered_set)
+// Trait for Sets (is exactly std::set or std::unordered_set)
 //
 template <class... T>
 struct is_set_type : std::false_type {};

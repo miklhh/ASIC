@@ -12,8 +12,9 @@
 // Use graph with regular map (instead of unordered_map) and set (instead of unordered_set) in the unit tests, so that
 // nodes are in total order, which makes reproducing tests a lot easier.
 //
+using UnitTestArc = BaseArc;
 using UnitTestNode = BaseNode<std::set>;
-using UnitTestGraph = Graph<UnitTestNode, std::map>;
+using UnitTestGraph = Graph<UnitTestNode, UnitTestArc, std::map>;
 
 //
 // Read all content from a file (until EOF) and return a string with it's content
@@ -37,10 +38,8 @@ TEST_CASE("Insert nodes and arcs to a new graph")
 
     std::stringstream s;
     graph.generate_dot_graph(s);
-    REQUIRE( read_file_to_string("dot-graphs/ref-graph1.dot") == s.str() );
-
-    // Store result to a file
     graph.generate_dot_graph("dot-graphs/test-graph1.dot");
+    REQUIRE( read_file_to_string("dot-graphs/ref-graph1.dot") == s.str() );
 }
 
 TEST_CASE("Test removing nodes from the graph")
@@ -54,16 +53,15 @@ TEST_CASE("Test removing nodes from the graph")
     graph.create_bidirectional_arc(n0, n1);
     graph.create_bidirectional_arc(n1, n2);
     graph.create_bidirectional_arc(n2, n3);
-    graph.create_bidirectional_arc(n3, n4);
+    auto arcs = graph.create_bidirectional_arc(n3, n4);
     graph.delete_node(n2);
-    graph.delete_arc(n3, n4);
+    graph.delete_arc(arcs.first);
 
     std::stringstream s;
     graph.generate_dot_graph(s);
+    graph.generate_dot_graph("dot-graphs/test-graph2.dot");
     REQUIRE( read_file_to_string("dot-graphs/ref-graph2.dot") == s.str() );
 
-    // Store result to a file
-    graph.generate_dot_graph("dot-graphs/test-graph2.dot");
 }
 
 TEST_CASE("Create a Graph with 50 nodes in a circle")
@@ -80,8 +78,7 @@ TEST_CASE("Create a Graph with 50 nodes in a circle")
 
     std::stringstream s;
     graph.generate_dot_graph(s);
+    graph.generate_dot_graph("dot-graphs/test-graph3.dot");
     REQUIRE( read_file_to_string("dot-graphs/ref-graph3.dot") == s.str() );
 
-    // Store result to a file
-    graph.generate_dot_graph("dot-graphs/test-graph3.dot");
 }

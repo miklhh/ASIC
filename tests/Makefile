@@ -3,15 +3,20 @@ CFLAGS = -O2 -std=c++20 -Wall -Wextra -Wpedantic -Weffc++
 
 .PHONY: run-all clean
 
-run-all: test_graph.out test_sfg.out
+run-all: test_graph.out test_sfg.out #test-flow-graph.out
 	./test_graph.out
 	./test_sfg.out
+	#./test-flow-graph.out
 
 test_graph.out: test_graph.cc catch.o ../graph.h ../trait.h
 	${CC} ${CFLAGS} test_graph.cc catch.o -o $@
 
 test_sfg.out: test_sfg.cc catch.o ../sfg.h ../op.h ../graph.h
 	${CC} ${CFLAGS} test_sfg.cc catch.o -o $@
+
+test-flow-graph.out: catch.o test-flow-graph.cc ../flow-graph.h ../graph.h
+	${CC} ${CFLAGS} test-flow-graph.cc catch.o -o $@
+
 
 catch.o: catch.cc catch.hpp
 	${CC} ${CFLAGS} -c $< -o $@
